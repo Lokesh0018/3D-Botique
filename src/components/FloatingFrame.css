@@ -1,0 +1,33 @@
+.frame-wrapper {
+  padding: 4vh 3vw;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+.floating-frame {
+  width: 100%;
+  max-width: 1800px;
+  background-color: var(--bg-surface);
+  border-radius: var(--frame-radius);
+  box-shadow: var(--frame-shadow);
+  position: relative;
+}
+
+.frame-content {
+  position: relative;
+  z-index: 2;
+}
+
+/* On mobile, simplify the margins */
+@media (max-width: 768px) {
+  .frame-wrapper {
+    padding: 2vh 4vw;
+  }
+  
+  .floating-frame {
+    border-radius: 16px;
+  }
+}

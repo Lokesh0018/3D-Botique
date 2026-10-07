@@ -1,0 +1,64 @@
+.featured-story {
+  position: relative;
+  height: 90vh;
+  margin: 4rem;
+  border-radius: var(--frame-radius);
+  overflow: hidden;
+}
+
+.fs-img-container {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.fs-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 60%);
+  display: flex;
+  align-items: flex-end;
+  padding: 6rem;
+  color: #fff;
+}
+
+.fs-content {
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.fs-title {
+  font-size: clamp(3rem, 6vw, 6rem);
+  line-height: 0.9;
+}
+
+.fs-desc {
+  font-size: 1.125rem;
+  opacity: 0.9;
+  line-height: 1.5;
+}
+
+.fs-link {
+  margin-top: 1rem;
+  border-bottom: 1px solid #fff;
+  padding-bottom: 0.25rem;
+  transition: opacity 0.3s ease;
+}
+
+.fs-link:hover {
+  opacity: 0.7;
+}
+
+@media (max-width: 768px) {
+  .featured-story {
+    margin: 2rem;
+    height: 70vh;
+  }
+  .fs-overlay {
+    padding: 3rem 2rem;
+  }
+}

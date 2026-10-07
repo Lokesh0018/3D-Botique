@@ -1,0 +1,118 @@
+.hero {
+  position: relative;
+  min-height: 85vh;
+  padding: 0 4rem 4rem;
+  display: flex;
+  align-items: center;
+}
+
+.hero-bg-layer {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: var(--frame-radius) var(--frame-radius) 0 0;
+  z-index: 0;
+  /* overflow: hidden removed to allow breakout, instead clip inner layers if needed */
+}
+
+.hero-content {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+.hero-typography {
+  padding-top: 4rem;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.hero-typography h1 {
+  font-size: clamp(4rem, 8vw, 8rem);
+  color: var(--text-primary);
+  margin-bottom: -1rem;
+  line-height: 0.9;
+}
+
+.hero-subtext {
+  margin-top: 3rem;
+  max-width: 400px;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.hero-cta {
+  margin-top: 3rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+}
+
+.cta-line {
+  width: 40px;
+  height: 1px;
+  background-color: var(--text-primary);
+  transition: width 0.4s var(--ease-out);
+}
+
+.hero-cta:hover .cta-line {
+  width: 60px;
+}
+
+.hero-imagery {
+  position: relative;
+  height: 65vh;
+  min-height: 500px;
+}
+
+.hero-main-img-wrapper {
+  position: absolute;
+  top: 0; left: 0; right: 10%; bottom: 10%;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.hero-fg-img-wrapper {
+  position: absolute;
+  bottom: -10%; /* Breaks out vertically */
+  right: -5%;  /* Breaks out horizontally */
+  width: 45%;
+  height: 60%;
+  z-index: 20;
+}
+
+.fg-placeholder {
+  border-radius: 8px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+}
+
+@media (max-width: 1024px) {
+  .hero-content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .hero-imagery {
+    height: 50vh;
+    order: -1; /* Image on top on mobile */
+  }
+  
+  .hero-fg-img-wrapper {
+    bottom: -5%;
+    right: 0;
+    width: 50%;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    padding: 0 2rem 2rem;
+  }
+}
