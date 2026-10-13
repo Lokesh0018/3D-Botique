@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
+import storyImg from '../assets/fashion-4.webp';
 import './FeaturedStory.css';
 
 const FeaturedStory = () => {
@@ -27,9 +28,8 @@ const FeaturedStory = () => {
   return (
     <section className="featured-story" ref={sectionRef}>
       <div className="fs-img-container">
-        <div className="img-placeholder" ref={imgRef}>
-          story-main.webp
-          <img src="/assets/journal/story-main.webp" alt="The Art of Slow Travel" />
+        <div className="img-placeholder" ref={imgRef} style={{ overflow: 'hidden' }}>
+          <img src={storyImg} alt="The Art of Slow Travel" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </div>
       </div>
       <div className="fs-overlay">

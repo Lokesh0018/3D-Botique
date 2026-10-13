@@ -15,14 +15,22 @@ const FloatingFrame = ({ children }) => {
         y: 20
       });
 
-      gsap.to(frameRef.current, {
-        scale: 1,
-        opacity: 1,
-        y: 0,
-        duration: 1.5,
-        ease: 'power3.out',
-        delay: 0.2
-      });
+      gsap.timeline()
+        .to(frameRef.current, {
+          scale: 1,
+          opacity: 1,
+          y: 0,
+          duration: 1.5,
+          ease: 'power3.out',
+          delay: 0.2
+        })
+        .to(frameRef.current, {
+          y: -8,
+          duration: 5,
+          ease: 'sine.inOut',
+          yoyo: true,
+          repeat: -1
+        });
     }, frameRef);
 
     return () => ctx.revert();

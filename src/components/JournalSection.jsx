@@ -1,12 +1,15 @@
 import React, { useRef } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
+import img1 from '../assets/fashion-1.webp';
+import img2 from '../assets/fashion-2.webp';
+import img3 from '../assets/fashion-3.webp';
 import './JournalSection.css';
 
 const destinations = [
-  { id: 1, name: 'TOKYO', title: 'Neon & Silence', desc: 'A study in contrasts.', img: 'journal-tokyo.webp' },
-  { id: 2, name: 'PARIS', title: 'The Old Guard', desc: 'Timeless elegance in modern forms.', img: 'journal-paris.webp' },
-  { id: 3, name: 'MARRAKECH', title: 'Desert Hues', desc: 'Earthy tones and vibrant life.', img: 'journal-marrakech.webp' },
+  { id: 1, name: 'TOKYO', title: 'Neon & Silence', desc: 'A study in contrasts.', img: img1 },
+  { id: 2, name: 'PARIS', title: 'The Old Guard', desc: 'Timeless elegance in modern forms.', img: img2 },
+  { id: 3, name: 'MARRAKECH', title: 'Desert Hues', desc: 'Earthy tones and vibrant life.', img: img3 },
 ];
 
 const JournalSection = () => {
@@ -42,8 +45,7 @@ const JournalSection = () => {
           <div key={dest.id} className="journal-card">
             <div className="journal-img-wrapper">
               <div className="img-placeholder">
-                {dest.img}
-                <img src={`/assets/journal/${dest.img}`} alt={dest.name} />
+                <img src={dest.img} alt={dest.name} />
               </div>
             </div>
             <div className="journal-card-content">

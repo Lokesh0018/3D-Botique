@@ -1,55 +1,135 @@
-.community {
+.community-section {
   padding: 8rem 4rem;
   background-color: var(--bg-surface);
 }
 
-.community-testimonial {
-  max-width: 900px;
-  margin: 0 auto 12rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.community-header {
   text-align: center;
+  margin-bottom: 5rem;
 }
 
-.community-quote {
-  font-size: clamp(2.5rem, 5vw, 4rem);
-  line-height: 1.2;
-  margin-bottom: 4rem;
+.testimonials-marquee-wrapper {
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+  margin-bottom: 8rem;
+  padding: 1rem 0;
 }
 
-.community-person {
+.testimonials-marquee {
+  display: flex;
+  gap: 1.5rem;
+  width: max-content;
+  animation: marquee 25s linear infinite;
+}
+
+.testimonials-marquee:hover {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-33.33%); }
+}
+
+.testi-card {
+  background-color: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+  width: 350px;
+  flex-shrink: 0;
+}
+
+.testi-top {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .person-avatar {
-  width: 60px;
-  height: 60px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   overflow: hidden;
 }
 
-.person-info {
-  text-align: left;
+.person-name {
+  font-weight: 600;
+  flex-grow: 1;
 }
 
-.community-finale {
+.quote-icon {
+  opacity: 0.5;
+}
+
+.testi-text {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.newsletter-section {
   text-align: center;
-  padding: 4rem 0;
+  background-color: #F8F9F3;
+  padding: 6rem 2rem;
+  border-radius: 24px;
+  margin: 0 auto;
+  max-width: 1000px;
 }
 
-.finale-title {
-  font-size: clamp(3rem, 6vw, 6rem);
-  line-height: 1;
+.newsletter-box {
+  display: flex;
+  max-width: 500px;
+  margin: 0 auto;
+  background-color: #fff;
+  border-radius: 30px;
+  padding: 0.5rem;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.03);
+}
+
+.newsletter-box input {
+  flex-grow: 1;
+  border: none;
+  background: none;
+  padding: 0 1.5rem;
+  outline: none;
+}
+
+.newsletter-box button {
+  background-color: #5C6B46;
+  color: #fff;
+  padding: 1rem 2.5rem;
+  border-radius: 24px;
+  font-weight: 500;
+  transition: opacity 0.2s ease;
+}
+
+.newsletter-box button:hover {
+  opacity: 0.9;
+}
+
+@media (max-width: 1200px) {
+  .testi-card {
+    width: 300px;
+  }
 }
 
 @media (max-width: 768px) {
-  .community {
+  .community-section {
     padding: 4rem 2rem;
   }
-  .community-testimonial {
-    margin-bottom: 6rem;
+  .testi-card {
+    width: 280px;
+  }
+  .newsletter-box {
+    flex-direction: column;
+    border-radius: 16px;
+    padding: 1rem;
+    gap: 1rem;
+  }
+  .newsletter-box input {
+    padding: 1rem;
   }
 }
