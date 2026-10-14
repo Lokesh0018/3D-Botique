@@ -1,6 +1,10 @@
 import React from 'react';
 import { useCart } from '../context/CartContext';
 import { handleAnchorClick } from '../lib/smoothScroll';
+import fashion1 from '../assets/fashion-1.webp';
+import fashion2 from '../assets/fashion-2.webp';
+import fashion3 from '../assets/fashion-3.webp';
+import fashion4 from '../assets/fashion-4.webp';
 import './Footer.css';
 
 const XIcon = ({ size = 16 }) => (
@@ -63,6 +67,25 @@ const Footer = () => {
 
   return (
     <footer className="footer" id="about">
+      {/* Decorative Editorial Fashion Silhouette Background Layer */}
+      <div className="footer-bg-gallery" aria-hidden="true">
+        <div className="footer-bg-track">
+          <div className="footer-bg-item item-1">
+            <img src={fashion1} alt="" loading="lazy" decoding="async" />
+          </div>
+          <div className="footer-bg-item item-2">
+            <img src={fashion2} alt="" loading="lazy" decoding="async" />
+          </div>
+          <div className="footer-bg-item item-3">
+            <img src={fashion3} alt="" loading="lazy" decoding="async" />
+          </div>
+          <div className="footer-bg-item item-4">
+            <img src={fashion4} alt="" loading="lazy" decoding="async" />
+          </div>
+        </div>
+        <div className="footer-bg-overlay-mask" />
+      </div>
+
       <div className="footer-content">
         <div className="footer-brand-col">
           <h2 className="text-display footer-brand">

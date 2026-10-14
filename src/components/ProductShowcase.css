@@ -45,44 +45,63 @@
 
 .thumb-item {
   position: relative;
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100px;
   height: 100px;
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
   padding: 0.5rem;
-  border: 1px solid transparent;
-  transition: border-color 0.2s ease, transform 0.2s ease;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.25s var(--ease-out);
 }
 
 .thumb-item img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center bottom;
   border-radius: 8px;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.08));
+  transition: transform 0.25s ease;
 }
 
 .thumb-item:hover {
-  border-color: var(--text-strong);
+  border-color: var(--border);
+  transform: translateY(-2px);
+}
+
+.thumb-item.is-selected {
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 3px rgba(196, 118, 93, 0.25);
+  transform: scale(1.04);
+}
+
+.thumb-item.is-selected img {
+  transform: scale(1.05);
 }
 
 .thumb-add {
   position: absolute;
   right: 6px;
   bottom: 6px;
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--text-primary);
   color: var(--bg-white);
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
-.thumb-item:hover .thumb-add {
+.thumb-add:hover {
   background: var(--accent-strong);
+  transform: scale(1.15);
 }
 
 .thumb-caption {
@@ -91,6 +110,13 @@
   font-size: 0.8rem;
   color: var(--text-secondary);
   text-align: center;
+  font-weight: 500;
+}
+
+.ps-changing {
+  opacity: 0.4;
+  transform: translateY(4px);
+  transition: all 0.18s ease;
 }
 
 .ps-center {
@@ -102,16 +128,37 @@
 .ps-main-image {
   width: 100%;
   aspect-ratio: 3/4;
-  border-radius: 24px;
+  border-radius: 28px;
   position: relative;
   overflow: hidden;
   background-color: var(--swatch-lavender);
+  transition: background-color 0.4s var(--ease-out);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
 }
 
-.ps-main-image > img {
+.ps-main-image.is-fading {
+  opacity: 0.3;
+  transform: scale(0.98);
+}
+
+.ps-main-image > img.ps-hero-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center bottom;
+  transform: scale(0.92);
+  filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.12));
+  image-rendering: -webkit-optimize-contrast;
+  transition: transform 0.4s var(--ease-out), opacity 0.3s ease;
+  animation: ps-in 0.4s var(--ease-out);
+}
+
+@keyframes ps-in {
+  from { opacity: 0; transform: scale(0.88); }
+  to { opacity: 1; transform: scale(0.92); }
 }
 
 .ps-viewer-loading {

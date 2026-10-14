@@ -24,3 +24,7 @@ dist-ssr
 *.sw?
 ref.mp4
 CLAUDE.md
+dist
+firebase.json
+.firebaserc
+.firebase

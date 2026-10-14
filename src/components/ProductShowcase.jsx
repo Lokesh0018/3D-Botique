@@ -11,24 +11,44 @@ import './ProductShowcase.css';
 // three.js is only downloaded when someone opens the 3D view.
 const ProductViewer3D = lazy(() => import('./ProductViewer3D'));
 
-const PRODUCT = PRODUCTS.limeBlouse;
-const PAIRS_WITH = [PRODUCTS.pastelCombo, PRODUCTS.creamGreen];
+const LOOK_ITEMS = [
+  PRODUCTS.limeBlouse,
+  PRODUCTS.pastelCombo,
+  PRODUCTS.creamGreen,
+  PRODUCTS.vintageStyle,
+];
 
 const ProductShowcase = () => {
   const containerRef = useRef(null);
   const { addItem } = useCart();
+  const [currentProduct, setCurrentProduct] = useState(PRODUCTS.limeBlouse);
   const [selectedSize, setSelectedSize] = useState(DEFAULT_SIZE);
   const [view, setView] = useState('photo'); // photo | 3d
   const [added, setAdded] = useState(false);
+  const [isChanging, setIsChanging] = useState(false);
   const addedTimer = useRef(null);
 
   useEffect(() => () => clearTimeout(addedTimer.current), []);
 
+  const handleSelectProduct = (product) => {
+    if (product.id === currentProduct.id) return;
+    setIsChanging(true);
+    setTimeout(() => {
+      setCurrentProduct(product);
+      setIsChanging(false);
+    }, 180);
+  };
+
   const handleBuy = () => {
-    addItem(PRODUCT, selectedSize);
+    addItem(currentProduct, selectedSize);
     setAdded(true);
     clearTimeout(addedTimer.current);
     addedTimer.current = setTimeout(() => setAdded(false), 2000);
+  };
+
+  const handleQuickAdd = (e, product) => {
+    e.stopPropagation();
+    addItem(product, DEFAULT_SIZE);
   };
 
   useGSAP(() => {
@@ -48,8 +68,8 @@ const ProductShowcase = () => {
   return (
     <section className="product-showcase" id="product" ref={containerRef} aria-labelledby="ps-title">
       <div className="ps-left">
-        <div className="ps-info-block ps-reveal">
-          <h2 id="ps-title" className="text-display ps-title">Lime Green<br/>Tied Blouse</h2>
+        <div className={`ps-info-block ps-reveal ${isChanging ? 'ps-changing' : ''}`}>
+          <h2 id="ps-title" className="text-display ps-title">{currentProduct.title}</h2>
           <p className="text-sans ps-desc">
             We Do Have Ready To Cut Collections In Stock & Exclusively Develop New Styles. We Guarantee Timely Delivery, Carry Stock, And Work In New Styles.
           </p>
@@ -58,32 +78,53 @@ const ProductShowcase = () => {
         <div className="ps-pairs ps-reveal">
           <span className="uppercase-meta ps-pairs-label">Complete The Look</span>
           <ul className="ps-thumbnails">
-            {PAIRS_WITH.map(item => (
-              <li key={item.id}>
-                <button
-                  type="button"
-                  className="thumb-item"
-                  style={{ backgroundColor: item.bg }}
-                  onClick={() => addItem(item)}
-                  aria-label={`Add ${item.title}, ${formatPrice(item.price)}, to bag`}
-                >
-                  <img src={item.img} alt="" loading="lazy" decoding="async" />
-                  <span className="thumb-add" aria-hidden="true"><Plus size={14} /></span>
-                </button>
-                <span className="thumb-caption text-sans" aria-hidden="true">{formatPrice(item.price)}</span>
-              </li>
-            ))}
+            {LOOK_ITEMS.map(item => {
+              const isCurrent = item.id === currentProduct.id;
+              return (
+                <li key={item.id}>
+                  <button
+                    type="button"
+                    className={`thumb-item ${isCurrent ? 'is-selected' : ''}`}
+                    style={{ backgroundColor: item.bg }}
+                    onClick={() => handleSelectProduct(item)}
+                    aria-label={`View ${item.title} (${formatPrice(item.price)}) in showcase`}
+                    aria-pressed={isCurrent}
+                  >
+                    <img src={item.img} alt="" loading="lazy" decoding="async" />
+                    <span
+                      className="thumb-add"
+                      onClick={(e) => handleQuickAdd(e, item)}
+                      title={`Quick add ${item.title} to bag`}
+                      aria-label={`Add ${item.title} to bag`}
+                    >
+                      <Plus size={14} />
+                    </span>
+                  </button>
+                  <span className="thumb-caption text-sans" aria-hidden="true">{formatPrice(item.price)}</span>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>
 
       <div className="ps-center ps-reveal">
-        <div className="ps-main-image">
+        <div
+          className={`ps-main-image ${isChanging ? 'is-fading' : ''}`}
+          style={{ backgroundColor: currentProduct.bg }}
+        >
           {view === 'photo' ? (
-            <img src={PRODUCT.img} alt={`${PRODUCT.title}, front view`} loading="lazy" decoding="async" />
+            <img
+              key={currentProduct.id}
+              src={currentProduct.img}
+              alt={`${currentProduct.title}, front view`}
+              loading="lazy"
+              decoding="async"
+              className="ps-hero-img"
+            />
           ) : (
             <Suspense fallback={<div className="ps-viewer-loading">Loading 3D view…</div>}>
-              <ProductViewer3D image={PRODUCT.img} label={PRODUCT.title} />
+              <ProductViewer3D image={currentProduct.img} label={currentProduct.title} />
             </Suspense>
           )}
 
@@ -113,8 +154,8 @@ const ProductShowcase = () => {
       </div>
 
       <div className="ps-right">
-        <div className="ps-info-block ps-reveal">
-          <div className="text-display ps-price">{formatPrice(PRODUCT.price)}</div>
+        <div className={`ps-info-block ps-reveal ${isChanging ? 'ps-changing' : ''}`}>
+          <div className="text-display ps-price">{formatPrice(currentProduct.price)}</div>
           <p className="text-sans ps-shipping">
             Free Express Shipping On All Orders Over {formatPrice(FREE_SHIPPING_THRESHOLD)}.
           </p>

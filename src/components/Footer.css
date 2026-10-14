@@ -1,11 +1,78 @@
 .footer {
-  padding: 4rem 4rem 2rem;
+  position: relative;
+  padding: 5rem 4rem 2rem;
   background-color: var(--bg-surface);
   border-radius: 0 0 var(--frame-radius) var(--frame-radius);
   border-top: 1px solid var(--border-faint);
+  overflow: hidden;
+}
+
+/* Decorative Fashion Silhouette Background Layer */
+.footer-bg-gallery {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.footer-bg-track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  padding: 0 3rem;
+  opacity: 0.38;
+  filter: contrast(105%) saturate(110%);
+  transition: opacity 0.5s ease;
+}
+
+.footer:hover .footer-bg-track {
+  opacity: 0.5;
+}
+
+.footer-bg-item {
+  height: 85%;
+  width: 20%;
+  max-width: 280px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  transform: translateY(4%);
+  transition: transform 0.6s var(--ease-out);
+}
+
+.footer:hover .footer-bg-item {
+  transform: translateY(0%);
+}
+
+.footer-bg-item img {
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.08));
+}
+
+.footer-bg-overlay-mask {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(249, 248, 244, 0.72) 0%,
+    rgba(249, 248, 244, 0.88) 75%,
+    rgba(249, 248, 244, 0.96) 100%
+  );
 }
 
 .footer-content {
+  position: relative;
+  z-index: 2;
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr;
   gap: 2rem;
@@ -60,6 +127,8 @@
 }
 
 .footer-bottom {
+  position: relative;
+  z-index: 2;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -97,11 +166,25 @@
   .footer-brand-col {
     grid-column: 1 / -1;
   }
+  .footer-bg-item {
+    width: 24%;
+  }
 }
 
 @media (max-width: 768px) {
   .footer {
-    padding: 4rem 2rem 2rem;
+    padding: 4rem 1.5rem 2rem;
+  }
+  .footer-bg-track {
+    opacity: 0.28;
+    padding: 0 1rem;
+  }
+  .footer-bg-item {
+    width: 45%;
+  }
+  .footer-bg-item.item-3,
+  .footer-bg-item.item-4 {
+    display: none;
   }
   .footer-content {
     grid-template-columns: 1fr;
