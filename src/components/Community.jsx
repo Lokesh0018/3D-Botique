@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { Quote, Check } from 'lucide-react';
+import { Quote, Check, Sparkles, Users } from 'lucide-react';
 import { prefersReducedMotion } from '../lib/motion';
 import './Community.css';
 
@@ -125,11 +125,47 @@ const Community = () => {
       </div>
 
       <div className="newsletter-section" id="newsletter">
-        <h2 className="text-display newsletter-title">Join Our Community</h2>
-        <p className="text-sans newsletter-desc">
-          Join our community working on creativity, collaboration, and growth<br/>with like-minded individuals.
-        </p>
-        <NewsletterForm />
+        {/* Ambient artistic background elements */}
+        <div className="newsletter-bg-glow glow-1" aria-hidden="true" />
+        <div className="newsletter-bg-glow glow-2" aria-hidden="true" />
+        <div className="newsletter-bg-grid" aria-hidden="true" />
+
+        {/* Floating community badges */}
+        <div className="floating-comm-badge badge-left" aria-hidden="true">
+          <Sparkles size={16} color="var(--accent-strong)" />
+          <span>Weekly Drops</span>
+        </div>
+
+        <div className="floating-comm-badge badge-right" aria-hidden="true">
+          <Users size={16} color="var(--olive)" />
+          <span>12.4k Members</span>
+        </div>
+
+        <div className="newsletter-inner">
+          <div className="community-pill-tag">
+            <Sparkles size={14} color="var(--accent-strong)" aria-hidden="true" />
+            <span className="uppercase-meta">Inner Circle</span>
+          </div>
+
+          <h2 className="text-display newsletter-title">Join Our Community</h2>
+          <p className="text-sans newsletter-desc">
+            Join our community working on creativity, collaboration, and growth<br className="desc-br"/>with like-minded individuals.
+          </p>
+
+          <NewsletterForm />
+
+          {/* Social Proof Member Avatars Row */}
+          <div className="community-members-row">
+            <div className="member-avatars-stack" aria-hidden="true">
+              <span className="mini-avatar" style={{ backgroundColor: 'var(--swatch-blush)' }}>AD</span>
+              <span className="mini-avatar" style={{ backgroundColor: 'var(--swatch-sage)' }}>AJ</span>
+              <span className="mini-avatar" style={{ backgroundColor: 'var(--swatch-lilac)' }}>ES</span>
+              <span className="mini-avatar" style={{ backgroundColor: 'var(--swatch-lavender)' }}>MJ</span>
+              <span className="mini-avatar avatar-plus">+2k</span>
+            </div>
+            <span className="text-sans members-stat-text">Join 12,000+ creators & stylists worldwide</span>
+          </div>
+        </div>
       </div>
     </section>
   );
