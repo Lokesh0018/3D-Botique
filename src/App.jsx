@@ -2,6 +2,9 @@ import React, { useEffect } from 'react';
 import Lenis from 'lenis';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { CartProvider } from './context/CartContext';
+import { setLenis } from './lib/smoothScroll';
+import { prefersReducedMotion } from './lib/motion';
 import FloatingFrame from './components/FloatingFrame';
 import Hero from './components/Hero';
 import Collection from './components/Collection';
@@ -10,11 +13,15 @@ import FeaturedStory from './components/FeaturedStory';
 import ProductShowcase from './components/ProductShowcase';
 import Community from './components/Community';
 import Footer from './components/Footer';
+import CartDrawer from './components/CartDrawer';
 
 gsap.registerPlugin(ScrollTrigger);
 
 function App() {
   useEffect(() => {
+    // Native scrolling for reduced-motion users; ScrollTrigger still works without Lenis.
+    if (prefersReducedMotion()) return undefined;
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -24,41 +31,29 @@ function App() {
       wheelMultiplier: 1,
       touchMultiplier: 2,
     });
+    setLenis(lenis);
 
-    function raf(time) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-
-    requestAnimationFrame(raf);
-
-    // GSAP ScrollTrigger Integration
+    // GSAP's ticker is the only driver of Lenis, so ScrollTrigger and Lenis
+    // update in the same frame (a second requestAnimationFrame loop would
+    // advance Lenis twice per frame).
     lenis.on('scroll', ScrollTrigger.update);
-
-    gsap.ticker.add((time) => {
-      lenis.raf(time * 1000);
-    });
-
-    gsap.ticker.lagSmoothing(0, 0);
+    const tick = (time) => lenis.raf(time * 1000);
+    gsap.ticker.add(tick);
+    gsap.ticker.lagSmoothing(0);
 
     return () => {
+      gsap.ticker.remove(tick);
+      gsap.ticker.lagSmoothing(500, 33);
       lenis.destroy();
-      gsap.ticker.remove(lenis.raf);
+      setLenis(null);
     };
   }, []);
 
   return (
-    <>
+    <CartProvider>
       {/* Background layer outside the frame */}
-      <div 
-        style={{
-          position: 'fixed',
-          top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: 'var(--bg-primary)',
-          zIndex: -1
-        }}
-      />
-      
+      <div className="app-backdrop" aria-hidden="true" />
+
       <FloatingFrame>
         <Hero />
         <Collection />
@@ -68,7 +63,9 @@ function App() {
         <Community />
         <Footer />
       </FloatingFrame>
-    </>
+
+      <CartDrawer />
+    </CartProvider>
   );
 }
 

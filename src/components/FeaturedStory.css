@@ -20,7 +20,11 @@
   display: flex;
   align-items: flex-end;
   padding: 6rem;
-  color: #fff;
+  color: var(--bg-white);
+}
+
+.fs-img {
+  overflow: hidden;
 }
 
 .fs-content {
@@ -44,7 +48,7 @@
 
 .fs-link {
   margin-top: 1rem;
-  border-bottom: 1px solid #fff;
+  border-bottom: 1px solid currentColor;
   padding-bottom: 0.25rem;
   transition: opacity 0.3s ease;
 }

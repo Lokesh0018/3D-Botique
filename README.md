@@ -1,16 +1,35 @@
-# React + Vite
+# AURA — Modern Women's Clothing
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A single-page fashion storefront built with React 19 and Vite. It has GSAP scroll animations, Lenis smooth scrolling, a working bag (cart) with search, and an interactive Three.js 3D viewer for the featured blouse.
 
-Currently, two official plugins are available:
+## Getting started
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm install
+npm run dev       # start the dev server
+npm run build     # production build to dist/
+npm run preview   # serve the production build
+npm run lint      # oxlint
+```
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Featured looks hero:** models cycle through a perspective "path". The progress dots jump to a look, and **view item** opens a quick preview where you can pick a size and add the item to the bag.
+- **Bag:** add items from the hero, the collection cards, search, and the product section. The bag is saved in `localStorage` and opens from the navbar icon, which shows a count badge. Checkout is not connected yet.
+- **Search:** filters the product catalog by name, color or tag.
+- **3D view:** the product section toggles between the photo and a lazy-loaded Three.js scene. Drag, use the arrow keys, or use the on-screen buttons to rotate it.
+- **Accessibility:** dialogs trap focus and return it on close, and every interactive element is keyboard reachable. When the OS "reduce motion" setting is on, smooth scrolling, auto-cycling and the marquee are turned off.
 
-## Expanding the Oxlint configuration
+## Project structure
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+```
+src/
+  App.jsx               # Lenis + GSAP wiring, CartProvider, section order
+  data/products.js      # product catalog, sizes, price formatting
+  context/CartContext   # cart state, toast, localStorage persistence
+  hooks/useDialog.js    # focus trap / Escape / scroll lock for dialogs
+  lib/                  # smooth-scroll helpers, reduced-motion check
+  components/           # one .jsx + .css per section or widget
+```
+
+Design tokens (colors, fonts, spacing, z-index) live in `src/index.css` under `:root`.

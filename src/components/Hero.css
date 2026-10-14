@@ -240,6 +240,7 @@ h1.hero-center-text .reveal-text {
 }
 
 .progress-dot {
+  position: relative;
   width: 8px;
   height: 8px;
   border-radius: 50%;
@@ -249,6 +250,13 @@ h1.hero-center-text .reveal-text {
   border: none;
   cursor: pointer;
   outline: none;
+}
+
+/* Invisible 32px hit area around the 8px dot */
+.progress-dot::before {
+  content: '';
+  position: absolute;
+  inset: -12px;
 }
 
 .progress-dot:focus-visible {
@@ -273,7 +281,7 @@ h1.hero-center-text .reveal-text {
   background: rgba(20, 21, 20, 0.6);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  z-index: 1000;
+  z-index: var(--z-overlay);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -287,7 +295,9 @@ h1.hero-center-text .reveal-text {
   max-width: 760px;
   width: 100%;
   position: relative;
-  overflow: hidden;
+  max-height: calc(100vh - 3rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   box-shadow: 0 40px 80px rgba(0, 0, 0, 0.2);
   animation: scaleUp 0.4s var(--ease-out);
 }
@@ -396,6 +406,10 @@ h1.hero-center-text .reveal-text {
   line-height: 1.6;
   color: var(--text-secondary);
   margin-bottom: 2rem;
+}
+
+.modal-size {
+  margin-bottom: 1.75rem;
 }
 
 .modal-add-cart {

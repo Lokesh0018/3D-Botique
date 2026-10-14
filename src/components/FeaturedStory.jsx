@@ -2,6 +2,8 @@ import React, { useRef } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import storyImg from '../assets/fashion-4.webp';
+import { handleAnchorClick } from '../lib/smoothScroll';
+import { prefersReducedMotion } from '../lib/motion';
 import './FeaturedStory.css';
 
 const FeaturedStory = () => {
@@ -9,6 +11,7 @@ const FeaturedStory = () => {
   const imgRef = useRef(null);
 
   useGSAP(() => {
+    if (prefersReducedMotion()) return;
     // Parallax & scale effect on the main image
     gsap.fromTo(imgRef.current,
       { scale: 1 },
@@ -26,20 +29,22 @@ const FeaturedStory = () => {
   }, { scope: sectionRef });
 
   return (
-    <section className="featured-story" ref={sectionRef}>
+    <section className="featured-story" id="culture" ref={sectionRef} aria-labelledby="culture-title">
       <div className="fs-img-container">
-        <div className="img-placeholder" ref={imgRef} style={{ overflow: 'hidden' }}>
-          <img src={storyImg} alt="The Art of Slow Travel" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        <div className="img-placeholder fs-img" ref={imgRef}>
+          <img src={storyImg} alt="Model in an earth beige vintage outfit, walking slowly" loading="lazy" decoding="async" />
         </div>
       </div>
       <div className="fs-overlay">
         <div className="fs-content">
           <span className="uppercase-meta">Editorial</span>
-          <h2 className="text-display fs-title">THE ART<br/>OF SLOW TRAVEL</h2>
+          <h2 id="culture-title" className="text-display fs-title">THE ART<br/>OF SLOW TRAVEL</h2>
           <p className="text-sans fs-desc">
             Embracing the journey over the destination. A meditative exploration of movement and stillness.
           </p>
-          <a href="#" className="uppercase-meta fs-link">Read Story →</a>
+          <a href="#journal" className="uppercase-meta fs-link" onClick={handleAnchorClick}>
+            Read The Journal <span aria-hidden="true">→</span>
+          </a>
         </div>
       </div>
     </section>

@@ -1,20 +1,81 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { Quote } from 'lucide-react';
+import { Quote, Check } from 'lucide-react';
+import { prefersReducedMotion } from '../lib/motion';
 import './Community.css';
 
 const testimonials = [
-  { id: 1, name: 'Alina Davis', text: 'This Blouse Is Very Perfect Because It Covers Various Purposes. It\'s Very Unique And Can Be Worn Formal And Informal.' },
-  { id: 2, name: 'Ayomi Jomi', text: 'I Bought This Nice Blouse And Did Not Need Any Adjustments. Highly Recommend Setting Up Such Standard Fitting.' },
-  { id: 3, name: 'Emily Smith', text: 'Love This Top Very Standard Cutting And Great Color! Fabric Was The Main Part Which Has Awesome Finish.' },
-  { id: 4, name: 'Michael Johnson', text: 'An Amazing Quality. Completely Surpassed My Expectations In Terms Of Fit And Texture.' },
+  { id: 1, name: 'Alina Davis', tone: 'var(--swatch-blush)', text: 'This Blouse Is Very Perfect Because It Covers Various Purposes. It\'s Very Unique And Can Be Worn Formal And Informal.' },
+  { id: 2, name: 'Ayomi Jomi', tone: 'var(--swatch-sage)', text: 'I Bought This Nice Blouse And Did Not Need Any Adjustments. Highly Recommend Setting Up Such Standard Fitting.' },
+  { id: 3, name: 'Emily Smith', tone: 'var(--swatch-lilac)', text: 'Love This Top Very Standard Cutting And Great Color! Fabric Was The Main Part Which Has Awesome Finish.' },
+  { id: 4, name: 'Michael Johnson', tone: 'var(--swatch-mist)', text: 'An Amazing Quality. Completely Surpassed My Expectations In Terms Of Fit And Texture.' },
 ];
+
+// The marquee translates by one third, so the list is rendered three times;
+// only the first copy is exposed to assistive tech.
+const MARQUEE_COPIES = 3;
+
+const initials = (name) => name.split(' ').map(part => part[0]).join('').slice(0, 2);
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const NewsletterForm = () => {
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState('idle'); // idle | error | success
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!EMAIL_PATTERN.test(email.trim())) {
+      setStatus('error');
+      return;
+    }
+    // No mailing-list backend is connected yet; confirm locally.
+    setStatus('success');
+    setEmail('');
+  };
+
+  if (status === 'success') {
+    return (
+      <p className="newsletter-success text-sans" role="status">
+        <Check size={18} aria-hidden="true" /> Thanks for joining — watch your inbox for our next drop.
+      </p>
+    );
+  }
+
+  return (
+    <form className="newsletter-form" onSubmit={handleSubmit} noValidate>
+      <div className={`newsletter-box ${status === 'error' ? 'has-error' : ''}`}>
+        <label htmlFor="newsletter-email" className="visually-hidden">Email address</label>
+        <input
+          id="newsletter-email"
+          type="email"
+          inputMode="email"
+          autoComplete="email"
+          placeholder="Enter Your Email"
+          className="text-sans"
+          value={email}
+          onChange={e => { setEmail(e.target.value); if (status === 'error') setStatus('idle'); }}
+          aria-invalid={status === 'error'}
+          aria-describedby={status === 'error' ? 'newsletter-error' : undefined}
+          required
+        />
+        <button type="submit" className="text-sans">Subscribe</button>
+      </div>
+      {status === 'error' && (
+        <p id="newsletter-error" className="newsletter-error text-sans" role="alert">
+          Please enter a valid email address, like name@example.com.
+        </p>
+      )}
+    </form>
+  );
+};
 
 const Community = () => {
   const containerRef = useRef(null);
 
   useGSAP(() => {
+    if (prefersReducedMotion()) return;
     gsap.fromTo('.community-header, .newsletter-section',
       { opacity: 0, y: 30 },
       {
@@ -27,46 +88,48 @@ const Community = () => {
     );
   }, { scope: containerRef });
 
+  const marqueeItems = Array.from({ length: MARQUEE_COPIES }, (_, copy) =>
+    testimonials.map(t => ({ ...t, copy }))
+  ).flat();
+
   return (
-    <section className="community-section" ref={containerRef}>
+    <section className="community-section" id="reviews" ref={containerRef}>
       <div className="community-header">
-        <h2 className="text-display" style={{ fontSize: '3rem', color: '#5C6B46' }}>Loved By Our Customers</h2>
-        <p className="text-sans" style={{ color: 'var(--text-secondary)', marginTop: '1rem' }}>
+        <h2 className="text-display community-title">Loved By Our Customers</h2>
+        <p className="text-sans community-desc">
           Our Customers Appreciate High Quality And Dedication To Sustainable Practices.<br/>They Share To Buy With Confidence Always.
         </p>
       </div>
-      
+
       <div className="testimonials-marquee-wrapper">
-        <div className="testimonials-marquee">
-          {[...testimonials, ...testimonials, ...testimonials].map((t, index) => (
-            <div key={`${t.id}-${index}`} className="testi-card">
+        <ul className="testimonials-marquee" aria-label="Customer reviews">
+          {marqueeItems.map(t => (
+            <li
+              key={`${t.id}-${t.copy}`}
+              className={`testi-card ${t.copy > 0 ? 'is-clone' : ''}`}
+              aria-hidden={t.copy > 0 || undefined}
+            >
               <div className="testi-top">
-                <div className="person-avatar">
-                  <div className="img-placeholder" style={{ backgroundColor: '#F0F0F0' }}>
-                    <img src={`https://i.pravatar.cc/150?u=${t.id}`} alt="avatar" />
-                  </div>
+                <div className="person-avatar" style={{ backgroundColor: t.tone }} aria-hidden="true">
+                  {initials(t.name)}
                 </div>
                 <div className="person-name text-sans">{t.name}</div>
-                <div className="quote-icon">
-                  <Quote size={20} color="#E2A788" />
+                <div className="quote-icon" aria-hidden="true">
+                  <Quote size={20} color="var(--peach)" />
                 </div>
               </div>
               <p className="testi-text text-sans">{t.text}</p>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
 
-      <div className="newsletter-section">
-        <h2 className="text-display" style={{ fontSize: '3.5rem', color: '#5C6B46', marginBottom: '1rem' }}>Join Our Community</h2>
-        <p className="text-sans" style={{ color: 'var(--text-secondary)', marginBottom: '3rem' }}>
+      <div className="newsletter-section" id="newsletter">
+        <h2 className="text-display newsletter-title">Join Our Community</h2>
+        <p className="text-sans newsletter-desc">
           Join our community working on creativity, collaboration, and growth<br/>with like-minded individuals.
         </p>
-        
-        <form className="newsletter-box">
-          <input type="email" placeholder="Enter Your Email" className="text-sans" />
-          <button type="submit" className="text-sans">Subscribe</button>
-        </form>
+        <NewsletterForm />
       </div>
     </section>
   );

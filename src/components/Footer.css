@@ -2,19 +2,36 @@
   padding: 4rem 4rem 2rem;
   background-color: var(--bg-surface);
   border-radius: 0 0 var(--frame-radius) var(--frame-radius);
-  border-top: 1px solid rgba(0,0,0,0.05);
+  border-top: 1px solid var(--border-faint);
 }
 
 .footer-content {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
   gap: 2rem;
   margin-bottom: 6rem;
 }
 
-.footer-links-col h4 {
+.footer-brand {
+  font-size: 1.5rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+  color: var(--text-strong);
+}
+
+.footer-about,
+.footer-copy {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.footer-about {
+  max-width: 250px;
+}
+
+.footer-links-col h3 {
   margin-bottom: 2rem;
-  color: #333;
+  color: var(--text-strong);
   font-weight: 600;
   font-size: 0.85rem;
 }
@@ -25,14 +42,18 @@
   gap: 1.25rem;
 }
 
-.footer-links a {
+.footer-links a,
+.footer-link-btn {
   color: var(--text-secondary);
   font-size: 0.95rem;
   transition: color 0.3s ease;
+  padding: 0;
+  text-align: left;
 }
 
-.footer-links a:hover {
-  color: #000;
+.footer-links a:hover,
+.footer-link-btn:hover {
+  color: var(--text-primary);
 }
 
 .footer-bottom {
@@ -40,35 +61,38 @@
   justify-content: space-between;
   align-items: center;
   padding-top: 2rem;
-  border-top: 1px solid rgba(0,0,0,0.05);
+  border-top: 1px solid var(--border-faint);
 }
 
 .social-links {
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .social-icon {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  border: 1px solid #E0E0E0;
+  border: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #333;
-  transition: all 0.3s ease;
+  color: var(--text-strong);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .social-icon:hover {
-  background-color: #333;
-  color: #fff;
+  background-color: var(--text-strong);
+  color: var(--bg-white);
 }
 
 @media (max-width: 1024px) {
   .footer-content {
     grid-template-columns: 1fr 1fr 1fr;
     row-gap: 4rem;
+  }
+  .footer-brand-col {
+    grid-column: 1 / -1;
   }
 }
 

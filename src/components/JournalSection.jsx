@@ -13,39 +13,45 @@ const destinations = [
 ];
 
 const JournalSection = () => {
+  const sectionRef = useRef(null);
   const scrollRef = useRef(null);
 
   useGSAP(() => {
-    // Horizontal scroll effect
-    const container = scrollRef.current;
-    
-    gsap.to(container, {
-      x: () => -(container.scrollWidth - window.innerWidth + 100), // Approximate scroll distance
-      ease: 'none',
-      scrollTrigger: {
-        trigger: '.journal-section',
-        start: 'top top',
-        end: '+=100%',
-        pin: true,
-        scrub: 1,
-        anticipatePin: 1
-      }
+    const mm = gsap.matchMedia();
+
+    // Horizontal pinned scroll on desktop only; below 769px the CSS stacks
+    // the cards vertically and the page scrolls normally.
+    mm.add('(min-width: 769px)', () => {
+      const container = scrollRef.current;
+      gsap.to(container, {
+        x: () => -(container.scrollWidth - sectionRef.current.clientWidth),
+        ease: 'none',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top top',
+          end: () => `+=${container.scrollWidth - sectionRef.current.clientWidth}`,
+          pin: true,
+          scrub: 1,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+        }
+      });
     });
-  }, { scope: scrollRef });
+  }, { scope: sectionRef });
 
   return (
-    <section className="journal-section" id="journal">
+    <section className="journal-section" id="journal" ref={sectionRef} aria-labelledby="journal-title">
       <div className="journal-scroll-container" ref={scrollRef}>
         <div className="journal-intro">
-          <h2 className="text-display journal-main-title">THE<br/>JOURNAL</h2>
+          <h2 id="journal-title" className="text-display journal-main-title">THE<br/>JOURNAL</h2>
           <p className="text-sans">Explore stories from around the globe.</p>
         </div>
-        
+
         {destinations.map((dest) => (
-          <div key={dest.id} className="journal-card">
+          <article key={dest.id} className="journal-card">
             <div className="journal-img-wrapper">
               <div className="img-placeholder">
-                <img src={dest.img} alt={dest.name} />
+                <img src={dest.img} alt={`Editorial look photographed in ${dest.name.toLowerCase().replace(/^\w/, c => c.toUpperCase())}`} loading="lazy" decoding="async" />
               </div>
             </div>
             <div className="journal-card-content">
@@ -53,7 +59,7 @@ const JournalSection = () => {
               <h3 className="text-display journal-card-title">{dest.title}</h3>
               <p className="text-sans journal-card-desc">{dest.desc}</p>
             </div>
-          </div>
+          </article>
         ))}
       </div>
     </section>

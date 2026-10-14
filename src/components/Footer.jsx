@@ -1,88 +1,108 @@
 import React from 'react';
+import { useCart } from '../context/CartContext';
+import { handleAnchorClick } from '../lib/smoothScroll';
 import './Footer.css';
 
-const Twitter = ({ size = 16 }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>
+const XIcon = ({ size = 16 }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
   </svg>
 );
 
 const Facebook = ({ size = 16 }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
   </svg>
 );
 
 const Instagram = ({ size = 16 }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
     <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
     <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
   </svg>
 );
 
+const CURRENT_YEAR = new Date().getFullYear();
+
+// Replace these with the brand's real profile URLs.
+const SOCIAL_LINKS = [
+  { label: 'AURA on X', href: 'https://x.com', Icon: XIcon },
+  { label: 'AURA on Facebook', href: 'https://www.facebook.com', Icon: Facebook },
+  { label: 'AURA on Instagram', href: 'https://www.instagram.com', Icon: Instagram },
+];
+
+const LINK_COLUMNS = [
+  {
+    heading: 'Shop',
+    links: [
+      { label: 'Hottest Picks', href: '#collections' },
+      { label: 'Lime Green Blouse', href: '#product' },
+      { label: 'Featured Looks', href: '#top' },
+    ],
+  },
+  {
+    heading: 'Explore',
+    links: [
+      { label: 'The Journal', href: '#journal' },
+      { label: 'Culture', href: '#culture' },
+      { label: 'Customer Reviews', href: '#reviews' },
+    ],
+  },
+  {
+    heading: 'Community',
+    links: [
+      { label: 'Newsletter', href: '#newsletter' },
+      { label: 'Your Bag', action: 'openCart' },
+    ],
+  },
+];
+
 const Footer = () => {
+  const { openCart } = useCart();
+
   return (
-    <footer className="footer">
+    <footer className="footer" id="about">
       <div className="footer-content">
         <div className="footer-brand-col">
-          <h2 className="text-display" style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#333' }}>Modern.</h2>
-          <p className="text-sans" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', maxWidth: '250px' }}>
+          <h2 className="text-display footer-brand">AURA</h2>
+          <p className="text-sans footer-about">
             We Ensure Excellent Cut And Fit Through Personal Consultations And Taking Accurate Measurements.
           </p>
         </div>
-        
-        <div className="footer-links-col">
-          <h4 className="uppercase-meta">COMPANY</h4>
-          <ul className="text-sans footer-links">
-            <li><a href="#">About</a></li>
-            <li><a href="#">Features</a></li>
-            <li><a href="#">Works</a></li>
-            <li><a href="#">Career</a></li>
-          </ul>
-        </div>
-        
-        <div className="footer-links-col">
-          <h4 className="uppercase-meta">HELP</h4>
-          <ul className="text-sans footer-links">
-            <li><a href="#">Customer Support</a></li>
-            <li><a href="#">Delivery Details</a></li>
-            <li><a href="#">Terms & Conditions</a></li>
-            <li><a href="#">Privacy Policy</a></li>
-          </ul>
-        </div>
-        
-        <div className="footer-links-col">
-          <h4 className="uppercase-meta">FAQ</h4>
-          <ul className="text-sans footer-links">
-            <li><a href="#">Account</a></li>
-            <li><a href="#">Manage Deliveries</a></li>
-            <li><a href="#">Orders</a></li>
-            <li><a href="#">Payments</a></li>
-          </ul>
-        </div>
-        
-        <div className="footer-links-col">
-          <h4 className="uppercase-meta">RESOURCES</h4>
-          <ul className="text-sans footer-links">
-            <li><a href="#">Free eBooks</a></li>
-            <li><a href="#">Development Tutorial</a></li>
-            <li><a href="#">How to - Blog</a></li>
-            <li><a href="#">Youtube Playlist</a></li>
-          </ul>
-        </div>
+
+        {LINK_COLUMNS.map(column => (
+          <nav key={column.heading} className="footer-links-col" aria-label={column.heading}>
+            <h3 className="uppercase-meta">{column.heading}</h3>
+            <ul className="text-sans footer-links">
+              {column.links.map(link => (
+                <li key={link.label}>
+                  {link.action === 'openCart' ? (
+                    <button type="button" className="footer-link-btn" onClick={openCart}>{link.label}</button>
+                  ) : (
+                    <a href={link.href} onClick={handleAnchorClick}>{link.label}</a>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))}
       </div>
-      
+
       <div className="footer-bottom">
-        <p className="text-sans" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-          &copy; 2024 All rights reserved
+        <p className="text-sans footer-copy">
+          &copy; {CURRENT_YEAR} AURA. All rights reserved.
         </p>
-        
-        <div className="social-links">
-          <a href="#" className="social-icon"><Twitter size={16} /></a>
-          <a href="#" className="social-icon"><Facebook size={16} /></a>
-          <a href="#" className="social-icon"><Instagram size={16} /></a>
-        </div>
+
+        <ul className="social-links">
+          {SOCIAL_LINKS.map(({ label, href, Icon }) => (
+            <li key={label}>
+              <a href={href} className="social-icon" aria-label={label} target="_blank" rel="noopener noreferrer">
+                <Icon size={16} />
+              </a>
+            </li>
+          ))}
+        </ul>
       </div>
     </footer>
   );

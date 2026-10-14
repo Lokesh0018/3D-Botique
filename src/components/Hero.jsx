@@ -1,76 +1,90 @@
 import React, { useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { Sparkles, Eye, ArrowRight, X } from 'lucide-react';
-import model1 from '../assets/fashion-1.webp';
-import model2 from '../assets/fashion-2.webp';
-import model3 from '../assets/fashion-3.webp';
-import model4 from '../assets/fashion-4.webp';
+import { useCart } from '../context/CartContext';
+import useDialog from '../hooks/useDialog';
+import { HERO_PRODUCTS, DEFAULT_SIZE, formatPrice } from '../data/products';
+import SizePicker from './SizePicker';
 import './Hero.css';
 
-const modelsData = [
-  {
-    id: 1,
-    img: model4,
-    title: "Vintage Style",
-    subtitle: "modern Fashion",
-    price: "$180.00",
-    color: "Earth Beige",
-    tag: "New Arrival"
-  },
-  {
-    id: 2,
-    img: model1,
-    title: "Pastel Trouser",
-    subtitle: "Skirt Combo",
-    price: "$240.00",
-    color: "Pastel Pink",
-    tag: "Best Seller"
-  },
-  {
-    id: 3,
-    img: model2,
-    title: "Cream & Green",
-    subtitle: "Combo Cloth",
-    price: "$320.00",
-    color: "Sage Green",
-    tag: "Trending"
-  },
-  {
-    id: 4,
-    img: model3,
-    title: "Lime Green",
-    subtitle: "modern Blouse",
-    price: "$120.00",
-    color: "Lime & Violet",
-    tag: "Featured"
-  }
-];
+const MODEL_COUNT = HERO_PRODUCTS.length;
+const FOREGROUND_STAGE = MODEL_COUNT - 1;
+const INITIAL_FOREGROUND = FOREGROUND_STAGE;
+const CYCLE_MS = 4500;
+
+// Stage each model sits on when `foregroundIdx` is in front. Matches what
+// repeated cycleNext() calls produce, so jumps and auto-cycling agree.
+const positionsFor = (foregroundIdx) =>
+  HERO_PRODUCTS.map((_, m) => (m - foregroundIdx + FOREGROUND_STAGE + MODEL_COUNT) % MODEL_COUNT);
+
+const ProductModal = ({ product, onClose }) => {
+  const { addItem } = useCart();
+  const [size, setSize] = useState(DEFAULT_SIZE);
+  const closeBtnRef = useRef(null);
+  const dialogRef = useDialog(true, onClose, closeBtnRef);
+  const titleId = `modal-title-${product.id}`;
+
+  const handleAdd = () => {
+    addItem(product, size);
+    onClose();
+  };
+
+  // Portaled to <body> so the overlay covers the viewport regardless of
+  // transforms/overflow on the hero and frame.
+  return createPortal(
+    <div className="product-modal-overlay" onClick={onClose}>
+      <div
+        className="product-modal-card"
+        ref={dialogRef}
+        onClick={e => e.stopPropagation()}
+        data-lenis-prevent
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+      >
+        <button ref={closeBtnRef} type="button" className="modal-close-btn" onClick={onClose} aria-label="Close product preview">
+          <X size={20} />
+        </button>
+        <div className="modal-body">
+          <div className="modal-img-wrapper">
+            <img src={product.img} alt={`${product.title} in ${product.color}`} />
+          </div>
+          <div className="modal-info">
+            <span className="modal-tag">{product.tag}</span>
+            <h2 id={titleId}>{product.title}</h2>
+            <p className="modal-sub">{product.subtitle} · {product.color}</p>
+            <div className="modal-price">{formatPrice(product.price)}</div>
+            <p className="modal-desc">
+              Designed for effortless elegance and timeless style. Hand-finished with premium sustainable fabrics.
+            </p>
+            <div className="modal-size">
+              <SizePicker value={size} onChange={setSize} />
+            </div>
+            <div className="modal-actions">
+              <button type="button" className="modal-add-cart" onClick={handleAdd}>
+                <span>Add to Bag · {size}</span>
+                <ArrowRight size={16} aria-hidden="true" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+};
 
 const Hero = () => {
   const heroRef = useRef(null);
   const modelElsRef = useRef([]);
-  const [activeMainIndex, setActiveMainIndex] = useState(3);
+  const [activeMainIndex, setActiveMainIndex] = useState(INITIAL_FOREGROUND);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const currentPositionsRef = useRef([0, 1, 2, 3]);
+  const currentPositionsRef = useRef(positionsFor(INITIAL_FOREGROUND));
   const isPausedRef = useRef(false);
-
-  // Handle Escape key to close modal
-  React.useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') setSelectedProduct(null);
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
-  // Manage focus when modal opens
-  React.useEffect(() => {
-    if (selectedProduct) {
-      const closeBtn = document.querySelector('.modal-close-btn');
-      if (closeBtn) closeBtn.focus();
-    }
-  }, [selectedProduct]);
+  // Set by the desktop animation context; null when animation is disabled.
+  const goToRef = useRef(null);
 
   useGSAP(() => {
     const mm = gsap.matchMedia();
@@ -85,7 +99,7 @@ const Hero = () => {
       // Intro animation timeline
       const tl = gsap.timeline({ delay: 0.2 });
 
-      tl.fromTo('.reveal-text', 
+      tl.fromTo('.reveal-text',
         { y: reduceMotion ? 0 : 50, opacity: 0 },
         { y: 0, opacity: 1, duration: reduceMotion ? 0.4 : 1.1, stagger: reduceMotion ? 0 : 0.12, ease: 'power3.out' },
         0
@@ -108,30 +122,27 @@ const Hero = () => {
       // Initial layout setup
       modelElsRef.current.forEach((el, i) => {
         if (!el) return;
-        const st = stages[i];
-        gsap.set(el, {
-          left: st.left,
-          height: st.height,
-          scale: st.scale,
-          opacity: st.opacity,
-          zIndex: st.zIndex
-        });
+        gsap.set(el, stages[currentPositionsRef.current[i]]);
       });
+
+      const moveTo = (el, stage, duration, ease) => {
+        gsap.killTweensOf(el);
+        gsap.to(el, { ...stage, duration: reduceMotion ? 0.3 : duration, ease });
+      };
 
       // Path cycling function
       const cycleNext = () => {
-        const newPositions = currentPositionsRef.current.map(pos => (pos + 1) % 4);
-        currentPositionsRef.current = newPositions;
-
-        const foregroundIdx = currentPositionsRef.current.indexOf(3);
-        setActiveMainIndex(foregroundIdx);
+        currentPositionsRef.current = currentPositionsRef.current.map(pos => (pos + 1) % MODEL_COUNT);
+        setActiveMainIndex(currentPositionsRef.current.indexOf(FOREGROUND_STAGE));
 
         modelElsRef.current.forEach((el, modelIdx) => {
           if (!el) return;
           const targetStageIdx = currentPositionsRef.current[modelIdx];
           const targetStage = stages[targetStageIdx];
 
-          if (targetStageIdx === 0) {
+          if (targetStageIdx === 0 && !reduceMotion) {
+            // Foreground model exits right, then re-enters at the back.
+            gsap.killTweensOf(el);
             gsap.to(el, {
               left: '105%',
               opacity: 0,
@@ -140,34 +151,39 @@ const Hero = () => {
               ease: 'power2.in',
               onComplete: () => {
                 gsap.set(el, { left: '-10%', scale: 0.6, opacity: 0, zIndex: 5 });
-                gsap.to(el, {
-                  left: targetStage.left,
-                  height: targetStage.height,
-                  scale: targetStage.scale,
-                  opacity: targetStage.opacity,
-                  zIndex: targetStage.zIndex,
-                  duration: 1.1,
-                  ease: 'power2.out'
-                });
+                gsap.to(el, { ...targetStage, duration: 1.1, ease: 'power2.out' });
               }
             });
           } else {
-            gsap.to(el, {
-              left: targetStage.left,
-              height: targetStage.height,
-              scale: targetStage.scale,
-              opacity: targetStage.opacity,
-              zIndex: targetStage.zIndex,
-              duration: 2.0,
-              ease: 'power3.inOut'
-            });
+            moveTo(el, targetStage, 2.0, 'power3.inOut');
           }
         });
       };
 
-      const pathInterval = setInterval(() => {
-        if (!isPausedRef.current) cycleNext();
-      }, 4500);
+      let pathInterval;
+      const restartCycle = () => {
+        clearInterval(pathInterval);
+        pathInterval = setInterval(() => {
+          if (!isPausedRef.current) cycleNext();
+        }, CYCLE_MS);
+      };
+      restartCycle();
+
+      // Jump straight to a model (progress dots).
+      goToRef.current = (foregroundIdx) => {
+        if (currentPositionsRef.current[foregroundIdx] === FOREGROUND_STAGE) return;
+        const nextUp = (currentPositionsRef.current.indexOf(FOREGROUND_STAGE) + MODEL_COUNT - 1) % MODEL_COUNT;
+        if (foregroundIdx === nextUp) {
+          cycleNext();
+        } else {
+          currentPositionsRef.current = positionsFor(foregroundIdx);
+          setActiveMainIndex(foregroundIdx);
+          modelElsRef.current.forEach((el, modelIdx) => {
+            if (el) moveTo(el, stages[currentPositionsRef.current[modelIdx]], 1.2, 'power3.inOut');
+          });
+        }
+        restartCycle();
+      };
 
       // Smooth mouse parallax (disabled for reduced motion)
       let handleMouseMove;
@@ -192,20 +208,30 @@ const Hero = () => {
 
       return () => {
         clearInterval(pathInterval);
+        goToRef.current = null;
         if (handleMouseMove) window.removeEventListener('mousemove', handleMouseMove);
       };
     });
 
   }, { scope: heroRef });
 
-  const activeProduct = modelsData[activeMainIndex];
+  const showModel = (idx) => {
+    if (goToRef.current) {
+      goToRef.current(idx);
+    } else {
+      currentPositionsRef.current = positionsFor(idx);
+      setActiveMainIndex(idx);
+    }
+  };
+
+  const activeProduct = HERO_PRODUCTS[activeMainIndex];
 
   return (
-    <section className="hero" ref={heroRef} aria-label="Hero Spotlight Section">
+    <section className="hero" ref={heroRef} aria-label="Featured looks">
       {/* Decorative Sparkles Top Left */}
       <div className="decor-element decor-sparkles-left" aria-hidden="true">
-        <Sparkles size={28} color="#C4765D" strokeWidth={1.5} />
-        <Sparkles size={16} color="#C4765D" strokeWidth={1.5} style={{ marginLeft: '-10px', marginTop: '-14px' }} />
+        <Sparkles size={28} color="var(--accent)" strokeWidth={1.5} />
+        <Sparkles size={16} color="var(--accent)" strokeWidth={1.5} style={{ marginLeft: '-10px', marginTop: '-14px' }} />
       </div>
 
       {/* Decorative Star Top Right */}
@@ -223,42 +249,45 @@ const Hero = () => {
       </h1>
 
       {/* HERO MODELS PATH TRACK */}
-      <div 
+      <div
         className="hero-models-path"
-        onMouseEnter={() => isPausedRef.current = true}
-        onMouseLeave={() => isPausedRef.current = false}
+        onMouseEnter={() => { isPausedRef.current = true; }}
+        onMouseLeave={() => { isPausedRef.current = false; }}
       >
-        {modelsData.map((item, index) => (
+        {HERO_PRODUCTS.map((item, index) => (
           <div
             key={item.id}
-            className="hero-path-model"
-            ref={el => modelElsRef.current[index] = el}
+            className={`hero-path-model ${index === activeMainIndex ? 'is-foreground' : ''}`}
+            ref={el => { modelElsRef.current[index] = el; }}
+            aria-hidden={index !== activeMainIndex}
           >
-            <img 
-              src={item.img} 
-              alt={`Fashion model showing ${item.title}`} 
-              fetchPriority="high" 
-              decoding="async" 
+            <img
+              src={item.img}
+              alt={`Model wearing the ${item.title} in ${item.color}`}
+              // Only the model that starts in the foreground is the LCP candidate.
+              fetchPriority={index === INITIAL_FOREGROUND ? 'high' : 'auto'}
+              decoding="async"
             />
           </div>
         ))}
 
         {/* FLOATING LIQUID GLASS PRODUCT BADGE */}
-        <div className="hero-floating-badge decor-element">
+        <div className="hero-floating-badge decor-element" aria-live="polite">
           <div className="hfb-badge-tag">{activeProduct.tag}</div>
           <div className="hfb-content">
             <div className="hfb-text">
               <span className="hfb-title">{activeProduct.title}</span>
               <span className="hfb-subtitle">{activeProduct.subtitle}</span>
-              <span className="hfb-price">{activeProduct.price}</span>
+              <span className="hfb-price">{formatPrice(activeProduct.price)}</span>
             </div>
-            <button 
+            <button
+              type="button"
               className="hfb-btn"
               onClick={() => setSelectedProduct(activeProduct)}
-              aria-label={`View item ${activeProduct.title}`}
+              aria-label={`View ${activeProduct.title}`}
             >
               <span>view item</span>
-              <Eye size={14} />
+              <Eye size={14} aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -268,9 +297,9 @@ const Hero = () => {
       <div className="hero-top-left">
         <div className="hero-subtext-card">
           <p className="hero-subtext text-sans reveal-text">
-            We Do Not Divide Our Collections To Seasons. We Create New Models Every Week, And We In A Few Items.
+            We Do Not Divide Our Collections Into Seasons. We Create New Models Every Week, In A Few Items Each.
           </p>
-          <div className="hero-doodle">
+          <div className="hero-doodle" aria-hidden="true">
             <svg width="60" height="24" viewBox="0 0 100 40" fill="none">
               <path d="M5 20 Q 25 5 45 20 T 85 20 Q 95 30 75 35" stroke="#4A5639" strokeWidth="2.5" strokeLinecap="round" fill="none"/>
             </svg>
@@ -286,58 +315,25 @@ const Hero = () => {
           </svg>
         </div>
 
-        <div className="hero-progress-dots">
-          {modelsData.map((m, idx) => (
+        <div className="hero-progress-dots" role="group" aria-label="Choose featured look">
+          {HERO_PRODUCTS.map((m, idx) => (
             <button
               key={m.id}
+              type="button"
               className={`progress-dot ${idx === activeMainIndex ? 'active' : ''}`}
-              aria-label={`Spotlight product ${idx + 1}`}
+              aria-label={`Show ${m.title}`}
+              aria-current={idx === activeMainIndex ? 'true' : undefined}
+              onClick={() => showModel(idx)}
             />
           ))}
         </div>
       </div>
 
-      {/* QUICK PRODUCT PREVIEW MODAL (UI/UX Pro Max interaction) */}
       {selectedProduct && (
-        <div className="product-modal-overlay" onClick={() => setSelectedProduct(null)}>
-          <div 
-            className="product-modal-card" 
-            onClick={e => e.stopPropagation()}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="modal-title"
-          >
-            <button className="modal-close-btn" onClick={() => setSelectedProduct(null)} aria-label="Close modal">
-              <X size={20} />
-            </button>
-            <div className="modal-body">
-              <div className="modal-img-wrapper">
-                <img src={selectedProduct.img} alt={`Preview of ${selectedProduct.title}`} />
-              </div>
-              <div className="modal-info">
-                <span className="modal-tag">{selectedProduct.tag}</span>
-                <h2 id="modal-title">{selectedProduct.title}</h2>
-                <p className="modal-sub">{selectedProduct.subtitle}</p>
-                <div className="modal-price">{selectedProduct.price}</div>
-                <p className="modal-desc">
-                  Designed for effortless elegance and timeless style. Hand-finished with premium sustainable fabrics.
-                </p>
-                <div className="modal-actions">
-                  <button className="modal-add-cart">
-                    <span>Add to Bag</span>
-                    <ArrowRight size={16} />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
       )}
     </section>
   );
 };
 
 export default Hero;
-
-
-

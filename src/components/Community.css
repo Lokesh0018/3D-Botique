@@ -23,8 +23,46 @@
   animation: marquee 25s linear infinite;
 }
 
-.testimonials-marquee:hover {
+.testimonials-marquee:hover,
+.testimonials-marquee:focus-within {
   animation-play-state: paused;
+}
+
+/* Reduced motion: no auto-scroll; show one copy as a swipeable row */
+@media (prefers-reduced-motion: reduce) {
+  .testimonials-marquee-wrapper {
+    overflow-x: auto;
+  }
+  .testimonials-marquee {
+    animation: none !important;
+  }
+  .testi-card.is-clone {
+    display: none;
+  }
+}
+
+.community-title,
+.newsletter-title {
+  color: var(--olive);
+}
+
+.community-title {
+  font-size: 3rem;
+}
+
+.community-desc {
+  color: var(--text-secondary);
+  margin-top: 1rem;
+}
+
+.newsletter-title {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+}
+
+.newsletter-desc {
+  color: var(--text-secondary);
+  margin-bottom: 3rem;
 }
 
 @keyframes marquee {
@@ -33,7 +71,7 @@
 }
 
 .testi-card {
-  background-color: #fff;
+  background-color: var(--bg-white);
   border-radius: 16px;
   padding: 2rem;
   box-shadow: 0 10px 30px rgba(0,0,0,0.02);
@@ -52,7 +90,14 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--olive-deep);
 }
 
 .person-name {
@@ -72,34 +117,66 @@
 
 .newsletter-section {
   text-align: center;
-  background-color: #F8F9F3;
+  background-color: var(--swatch-mist);
   padding: 6rem 2rem;
   border-radius: 24px;
   margin: 0 auto;
   max-width: 1000px;
 }
 
-.newsletter-box {
-  display: flex;
+.newsletter-form {
   max-width: 500px;
   margin: 0 auto;
-  background-color: #fff;
+}
+
+.newsletter-box {
+  display: flex;
+  background-color: var(--bg-white);
   border-radius: 30px;
   padding: 0.5rem;
+  border: 1px solid transparent;
   box-shadow: 0 10px 20px rgba(0,0,0,0.03);
+  transition: border-color 0.2s ease;
+}
+
+.newsletter-box:focus-within {
+  border-color: var(--olive);
+}
+
+.newsletter-box.has-error {
+  border-color: #b3261e;
 }
 
 .newsletter-box input {
   flex-grow: 1;
+  min-width: 0;
   border: none;
   background: none;
   padding: 0 1.5rem;
+  font-size: 1rem;
   outline: none;
 }
 
+.newsletter-error {
+  margin-top: 0.75rem;
+  color: #b3261e;
+  font-size: 0.875rem;
+}
+
+.newsletter-success {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  border-radius: 30px;
+  background: var(--bg-white);
+  color: var(--olive);
+  font-weight: 500;
+}
+
 .newsletter-box button {
-  background-color: #5C6B46;
-  color: #fff;
+  background-color: var(--olive);
+  color: var(--bg-white);
   padding: 1rem 2.5rem;
   border-radius: 24px;
   font-weight: 500;
