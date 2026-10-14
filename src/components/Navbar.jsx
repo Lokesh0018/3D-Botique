@@ -21,11 +21,37 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const [isScrolled, setIsScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState('');
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
+
+      // Scroll position tracking for active section
+      const sectionIds = ['about', 'culture', 'journal', 'collections'];
+      const scrollPos = window.scrollY + 250;
+
+      let current = '';
+      for (const id of sectionIds) {
+        const el = document.getElementById(id);
+        if (el) {
+          const top = el.offsetTop;
+          const height = el.offsetHeight;
+          if (scrollPos >= top && scrollPos < top + height) {
+            current = `#${id}`;
+            break;
+          }
+        }
+      }
+
+      // If at bottom of page, highlight about/footer
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 60) {
+        current = '#about';
+      }
+
+      setActiveSection(current);
     };
+
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
@@ -72,9 +98,21 @@ const Navbar = () => {
 
       <div className="nav-center">
         <ul className="nav-links text-sans uppercase-meta">
-          {NAV_LINKS.map(link => (
-            <li key={link.href}><a href={link.href} onClick={handleAnchorClick}>{link.label}</a></li>
-          ))}
+          {NAV_LINKS.map(link => {
+            const isActive = activeSection === link.href;
+            return (
+              <li key={link.href}>
+                <a
+                  href={link.href}
+                  className={isActive ? 'is-active' : ''}
+                  aria-current={isActive ? 'true' : undefined}
+                  onClick={handleAnchorClick}
+                >
+                  {link.label}
+                </a>
+              </li>
+            );
+          })}
         </ul>
       </div>
 
@@ -105,9 +143,21 @@ const Navbar = () => {
 
       {menuOpen && (
         <ul id="mobile-menu" className="mobile-menu text-sans uppercase-meta">
-          {NAV_LINKS.map(link => (
-            <li key={link.href}><a href={link.href} onClick={onNavClick}>{link.label}</a></li>
-          ))}
+          {NAV_LINKS.map(link => {
+            const isActive = activeSection === link.href;
+            return (
+              <li key={link.href}>
+                <a
+                  href={link.href}
+                  className={isActive ? 'is-active' : ''}
+                  aria-current={isActive ? 'true' : undefined}
+                  onClick={onNavClick}
+                >
+                  {link.label}
+                </a>
+              </li>
+            );
+          })}
         </ul>
       )}
 

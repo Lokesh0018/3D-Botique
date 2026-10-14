@@ -55,6 +55,12 @@
 .nav-links a {
   position: relative;
   padding-bottom: 4px;
+  color: var(--text-secondary);
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: var(--text-primary);
 }
 
 .nav-links a::after {
@@ -63,13 +69,24 @@
   left: 0;
   bottom: 0;
   width: 0;
-  height: 1px;
-  background-color: var(--text-primary);
-  transition: width 0.4s var(--ease-out);
+  height: 2px;
+  background-color: var(--accent-strong);
+  border-radius: 1px;
+  transition: width 0.35s var(--ease-out);
 }
 
 .nav-links a:hover::after {
   width: 100%;
+}
+
+.nav-links a.is-active {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.nav-links a.is-active::after {
+  width: 100%;
+  background-color: var(--accent-strong);
 }
 
 .nav-right {
@@ -133,13 +150,24 @@
 }
 
 .mobile-menu a {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 1rem 1.25rem;
   border-radius: 10px;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
 }
 
 .mobile-menu a:hover {
   background: var(--bg-surface);
+  color: var(--text-primary);
+}
+
+.mobile-menu a.is-active {
+  background: var(--swatch-blush);
+  color: var(--accent-strong);
+  font-weight: 600;
 }
 
 @media (max-width: 1024px) {
