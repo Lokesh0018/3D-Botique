@@ -12,11 +12,11 @@ const FeaturedStory = () => {
 
   useGSAP(() => {
     if (prefersReducedMotion()) return;
-    // Parallax & scale effect on the main image
+    // Parallax subtle scale effect while preserving sharpness
     gsap.fromTo(imgRef.current,
-      { scale: 1 },
+      { scale: 0.98 },
       {
-        scale: 1.15,
+        scale: 1.04,
         ease: 'none',
         scrollTrigger: {
           trigger: sectionRef.current,

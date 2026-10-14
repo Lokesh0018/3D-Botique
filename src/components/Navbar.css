@@ -1,17 +1,50 @@
 .navbar {
-  position: relative;
+  position: sticky;
+  top: 0;
   z-index: var(--z-header);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 2.5rem 4rem;
+  padding: 2rem 4rem;
   color: var(--text-primary);
+  background: transparent;
+  transition: background-color 0.35s var(--ease-out),
+              backdrop-filter 0.35s var(--ease-out),
+              -webkit-backdrop-filter 0.35s var(--ease-out),
+              padding 0.35s var(--ease-out),
+              box-shadow 0.35s var(--ease-out),
+              border-bottom 0.35s var(--ease-out);
+  border-top-left-radius: var(--frame-radius);
+  border-top-right-radius: var(--frame-radius);
+}
+
+.navbar.is-scrolled {
+  padding: 1.25rem 4rem;
+  background: rgba(249, 248, 244, 0.85);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
 }
 
 .brand-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
   font-size: 1.5rem;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   font-weight: 500;
+  transition: opacity 0.25s ease;
+}
+
+.brand-logo:hover {
+  opacity: 0.85;
+}
+
+.brand-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .nav-links {
@@ -126,6 +159,12 @@
 
 @media (max-width: 768px) {
   .navbar {
-    padding: 1.5rem 2rem;
+    padding: 1.5rem 1.5rem;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+  }
+
+  .navbar.is-scrolled {
+    padding: 1rem 1.5rem;
   }
 }
