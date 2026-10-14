@@ -1,6 +1,6 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Minus, Plus, ShoppingBag, Check } from 'lucide-react';
+import { X, Minus, Plus, ShoppingBag, Check, Loader2, ArrowRight, Sparkles } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import useDialog from '../hooks/useDialog';
 import { formatPrice, FREE_SHIPPING_THRESHOLD } from '../data/products';
@@ -8,15 +8,35 @@ import { scrollToHash } from '../lib/smoothScroll';
 import './CartDrawer.css';
 
 const CartDrawer = () => {
-  const { items, count, subtotal, isOpen, openCart, closeCart, updateQuantity, removeItem, toast, dismissToast } = useCart();
+  const { items, count, subtotal, isOpen, openCart, closeCart, updateQuantity, removeItem, clearCart, toast, dismissToast } = useCart();
   const closeBtnRef = useRef(null);
   const dialogRef = useDialog(isOpen, closeCart, closeBtnRef);
+
+  const [checkoutState, setCheckoutState] = useState('idle'); // 'idle' | 'processing' | 'success'
+  const orderNumber = useRef(Math.floor(100000 + Math.random() * 900000));
 
   const remainingForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
 
   const browseCollection = () => {
     closeCart();
     scrollToHash('#collections');
+  };
+
+  const handleCheckout = () => {
+    if (checkoutState === 'processing') return;
+    setCheckoutState('processing');
+    
+    // Simulate luxury payment gateway & packing confirmation
+    setTimeout(() => {
+      setCheckoutState('success');
+      clearCart();
+    }, 1600);
+  };
+
+  const resetAfterCheckout = () => {
+    setCheckoutState('idle');
+    closeCart();
+    orderNumber.current = Math.floor(100000 + Math.random() * 900000);
   };
 
   return createPortal(
@@ -87,9 +107,46 @@ const CartDrawer = () => {
                     <span>{formatPrice(subtotal)}</span>
                   </div>
                   <p className="cart-note text-sans">Taxes and shipping are calculated at checkout.</p>
-                  <button type="button" className="cart-primary-btn" disabled title="Checkout isn't connected yet">
-                    Checkout — coming soon
-                  </button>
+                  
+                  {checkoutState === 'success' ? (
+                    <div className="checkout-success-view">
+                      <div className="success-badge-circle" aria-hidden="true">
+                        <Check size={28} strokeWidth={2.5} />
+                      </div>
+                      <h3 className="text-display success-title">Order Confirmed</h3>
+                      <p className="text-sans success-order-id">Order #AURA-{orderNumber.current}</p>
+                      <p className="text-sans success-desc">
+                        Thank you for your order. A confirmation email has been dispatched with delivery tracking.
+                      </p>
+                      <div className="success-confetti-row" aria-hidden="true">
+                        <Sparkles size={18} color="var(--accent-strong)" />
+                        <Sparkles size={14} color="var(--olive-soft)" />
+                        <Sparkles size={18} color="var(--star)" />
+                      </div>
+                      <button type="button" className="cart-primary-btn" onClick={resetAfterCheckout}>
+                        Continue Shopping
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      className={`cart-primary-btn checkout-btn ${checkoutState === 'processing' ? 'is-loading' : ''}`}
+                      disabled={checkoutState === 'processing'}
+                      onClick={handleCheckout}
+                    >
+                      {checkoutState === 'processing' ? (
+                        <span className="checkout-btn-loading">
+                          <Loader2 size={18} className="spinner" aria-hidden="true" />
+                          <span>Securing Order...</span>
+                        </span>
+                      ) : (
+                        <span className="checkout-btn-idle">
+                          <span>Proceed to Checkout</span>
+                          <ArrowRight size={16} aria-hidden="true" />
+                        </span>
+                      )}
+                    </button>
+                  )}
                 </footer>
               </>
             )}

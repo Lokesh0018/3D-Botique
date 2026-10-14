@@ -69,6 +69,10 @@ export const CartProvider = ({ children }) => {
     setItems(prev => prev.filter(item => item.key !== key));
   }, []);
 
+  const clearCart = useCallback(() => {
+    setItems([]);
+  }, []);
+
   const value = useMemo(() => ({
     items,
     count: items.reduce((sum, item) => sum + item.quantity, 0),
@@ -79,9 +83,10 @@ export const CartProvider = ({ children }) => {
     addItem,
     updateQuantity,
     removeItem,
+    clearCart,
     toast,
     dismissToast: () => setToast(null),
-  }), [items, isOpen, addItem, updateQuantity, removeItem, toast]);
+  }), [items, isOpen, addItem, updateQuantity, removeItem, clearCart, toast]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };

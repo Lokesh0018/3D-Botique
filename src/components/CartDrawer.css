@@ -176,16 +176,115 @@
   background: var(--text-primary);
   color: var(--bg-white);
   font-weight: 500;
-  transition: background-color 0.2s ease;
+  transition: all 0.3s var(--ease-out);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cart-primary-btn:hover:not(:disabled) {
   background: var(--accent-strong);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(181, 113, 79, 0.25);
 }
 
 .cart-primary-btn:disabled {
-  opacity: 0.55;
+  opacity: 0.7;
   cursor: not-allowed;
+  transform: none;
+}
+
+.checkout-btn-idle,
+.checkout-btn-loading {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  font-size: 0.95rem;
+}
+
+.checkout-btn.is-loading {
+  background: var(--olive-deep);
+}
+
+.spinner {
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Luxury Checkout Success View */
+.checkout-success-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.75rem;
+  padding: 1.5rem 0.5rem 0.5rem;
+  animation: success-pop 0.5s var(--ease-out);
+}
+
+.success-badge-circle {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--olive);
+  color: var(--bg-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 12px 30px rgba(92, 107, 70, 0.3);
+  animation: badge-scale 0.6s var(--ease-out);
+}
+
+.success-title {
+  font-size: 1.85rem;
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+
+.success-order-id {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent-strong);
+}
+
+.success-desc {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  max-width: 320px;
+}
+
+.success-confetti-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0.5rem 0 1rem;
+  animation: float 2s ease-in-out infinite;
+}
+
+@keyframes badge-scale {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+@keyframes success-pop {
+  0% { opacity: 0; transform: translateY(15px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
 }
 
 .cart-empty {
