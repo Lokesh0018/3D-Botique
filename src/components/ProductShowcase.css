@@ -161,58 +161,12 @@
   to { opacity: 1; transform: scale(0.92); }
 }
 
-.ps-viewer-loading {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-}
-
 .decor-star {
   position: absolute;
   top: 10%;
   left: -16px;
   z-index: 10;
   pointer-events: none;
-}
-
-.ps-view-toggle {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  z-index: 10;
-  display: flex;
-  padding: 0.25rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-}
-
-.ps-view-toggle button {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  min-height: 36px;
-  padding: 0 0.9rem;
-  border-radius: 999px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.ps-view-toggle button.active {
-  background: var(--text-primary);
-  color: var(--bg-white);
-}
-
-.ps-view-toggle button:not(.active):hover {
-  color: var(--text-primary);
 }
 
 .ps-right {
@@ -235,20 +189,29 @@
 .add-to-cart-btn {
   margin-top: 3rem;
   width: 100%;
+  min-height: 52px;
   background-color: var(--text-primary);
   color: var(--bg-white);
-  padding: 1.25rem 1.5rem;
-  border-radius: 30px;
+  padding: 1.15rem 1.6rem;
+  border-radius: 999px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-size: 1rem;
   font-weight: 500;
+  letter-spacing: 0.01em;
   cursor: pointer;
-  transition: opacity 0.2s ease, background-color 0.2s ease;
+  transition: opacity 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
 }
 
 .add-to-cart-btn:hover {
-  opacity: 0.85;
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+.add-to-cart-btn:active {
+  transform: scale(0.98);
 }
 
 .add-to-cart-btn.added {
@@ -257,16 +220,127 @@
 
 @media (max-width: 1024px) {
   .product-showcase {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 3rem;
   }
 }
 
 @media (max-width: 768px) {
+  /* Title → image → price/buy → "complete the look" */
   .product-showcase {
-    padding: 4rem 2rem;
+    display: flex;
+    flex-direction: column;
+    padding: 3.5rem 1.25rem 4.5rem;
+    gap: 2rem;
+    min-height: auto;
+    overflow: visible;
   }
+
+  .ps-left {
+    display: flex;
+    flex-direction: column;
+    order: 1;
+  }
+
   .ps-title {
-    font-size: 2.75rem;
+    font-size: clamp(2.25rem, 8vw, 2.75rem);
+    line-height: 1.1;
+  }
+
+  .ps-desc {
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .ps-center {
+    order: 2;
+    width: 100%;
+  }
+
+  .ps-main-image {
+    padding: 1.25rem;
+    border-radius: 20px;
+    aspect-ratio: 4 / 5;
+    max-height: 60vh;
+  }
+
+  .decor-star {
+    top: 0.75rem;
+    left: 0.75rem;
+  }
+
+  .ps-right {
+    order: 3;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .ps-info-block {
+    width: 100%;
+  }
+
+  .ps-price {
+    font-size: 2.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .ps-shipping {
+    font-size: 0.85rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .selectors {
+    margin-bottom: 0.5rem;
+  }
+
+  .add-to-cart-btn {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    width: 100%;
+    min-height: 52px;
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 999px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 5;
+  }
+
+  .ps-pairs {
+    order: 4;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-faint, rgba(0, 0, 0, 0.08));
+    width: 100%;
+  }
+
+  .ps-pairs-label {
+    margin-bottom: 0.85rem;
+    font-size: 0.75rem;
+  }
+
+  .ps-thumbnails {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.625rem;
+  }
+
+  .thumb-item {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    border-radius: 12px;
+    padding: 0.35rem;
+  }
+
+  .thumb-add {
+    right: 4px;
+    bottom: 4px;
+    width: 24px;
+    height: 24px;
   }
 }

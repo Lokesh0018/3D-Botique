@@ -146,9 +146,41 @@
 
 @media (max-width: 768px) {
   .collection-section {
-    padding: 4rem 2rem;
+    padding: 3.5rem 1.25rem;
   }
+  .collection-header {
+    margin-bottom: 2.5rem;
+  }
+  .section-title {
+    font-size: clamp(2.25rem, 10vw, 2.75rem);
+  }
+  .section-desc {
+    font-size: 0.9rem;
+  }
+  /* Swipeable row with the next card peeking in */
   .collection-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 78%;
+    gap: 1rem;
+    margin: 0 -1.25rem;
+    padding: 0 1.25rem 0.5rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding: 0 1.25rem;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+  .collection-grid::-webkit-scrollbar {
+    display: none;
+  }
+  .collection-card {
+    scroll-snap-align: start;
+  }
+  .card-img-wrapper {
+    margin-bottom: 1rem;
+  }
+  .card-title {
+    font-size: 0.95rem;
   }
 }

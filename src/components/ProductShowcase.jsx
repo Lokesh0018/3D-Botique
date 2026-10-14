@@ -1,15 +1,12 @@
-import React, { Suspense, lazy, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { Star, Check, Plus, Box, Image as ImageIcon } from 'lucide-react';
+import { Star, Check, Plus } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { PRODUCTS, DEFAULT_SIZE, FREE_SHIPPING_THRESHOLD, formatPrice } from '../data/products';
 import { prefersReducedMotion } from '../lib/motion';
 import SizePicker from './SizePicker';
 import './ProductShowcase.css';
-
-// three.js is only downloaded when someone opens the 3D view.
-const ProductViewer3D = lazy(() => import('./ProductViewer3D'));
 
 const LOOK_ITEMS = [
   PRODUCTS.limeBlouse,
@@ -23,7 +20,6 @@ const ProductShowcase = () => {
   const { addItem } = useCart();
   const [currentProduct, setCurrentProduct] = useState(PRODUCTS.limeBlouse);
   const [selectedSize, setSelectedSize] = useState(DEFAULT_SIZE);
-  const [view, setView] = useState('photo'); // photo | 3d
   const [added, setAdded] = useState(false);
   const [isChanging, setIsChanging] = useState(false);
   const addedTimer = useRef(null);
@@ -113,42 +109,17 @@ const ProductShowcase = () => {
           className={`ps-main-image ${isChanging ? 'is-fading' : ''}`}
           style={{ backgroundColor: currentProduct.bg }}
         >
-          {view === 'photo' ? (
-            <img
-              key={currentProduct.id}
-              src={currentProduct.img}
-              alt={`${currentProduct.title}, front view`}
-              loading="lazy"
-              decoding="async"
-              className="ps-hero-img"
-            />
-          ) : (
-            <Suspense fallback={<div className="ps-viewer-loading">Loading 3D view…</div>}>
-              <ProductViewer3D image={currentProduct.img} label={currentProduct.title} />
-            </Suspense>
-          )}
+          <img
+            key={currentProduct.id}
+            src={currentProduct.img}
+            alt={`${currentProduct.title}, front view`}
+            loading="lazy"
+            decoding="async"
+            className="ps-hero-img"
+          />
 
           <div className="decor-star" aria-hidden="true">
             <Star size={32} fill="var(--star)" color="var(--star)" />
-          </div>
-
-          <div className="ps-view-toggle" role="group" aria-label="Product view">
-            <button
-              type="button"
-              aria-pressed={view === 'photo'}
-              className={view === 'photo' ? 'active' : ''}
-              onClick={() => setView('photo')}
-            >
-              <ImageIcon size={14} aria-hidden="true" /> Photo
-            </button>
-            <button
-              type="button"
-              aria-pressed={view === '3d'}
-              className={view === '3d' ? 'active' : ''}
-              onClick={() => setView('3d')}
-            >
-              <Box size={14} aria-hidden="true" /> 3D
-            </button>
           </div>
         </div>
       </div>

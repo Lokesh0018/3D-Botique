@@ -83,18 +83,45 @@ const Hero = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const currentPositionsRef = useRef(positionsFor(INITIAL_FOREGROUND));
   const isPausedRef = useRef(false);
-  // Set by the desktop animation context; null when animation is disabled.
+  // Set by the matchMedia context (desktop path animation or mobile cycling).
   const goToRef = useRef(null);
+  const touchStartXRef = useRef(null);
 
   useGSAP(() => {
     const mm = gsap.matchMedia();
 
     mm.add({
       isDesktop: "(min-width: 769px)",
+      // Only so the callback runs on phones: matchMedia skips it when no
+      // condition matches.
+      isMobile: "(max-width: 768px)",
       reduceMotion: "(prefers-reduced-motion: reduce)"
     }, (context) => {
       const { isDesktop, reduceMotion } = context.conditions;
-      if (!isDesktop) return;
+
+      // Mobile: CSS crossfades the foreground look; JS only advances it.
+      if (!isDesktop) {
+        let timer;
+        const setLook = (idx) => {
+          currentPositionsRef.current = positionsFor(idx);
+          setActiveMainIndex(idx);
+        };
+        const restart = () => {
+          clearInterval(timer);
+          if (reduceMotion) return;
+          timer = setInterval(() => {
+            if (isPausedRef.current) return;
+            const current = currentPositionsRef.current.indexOf(FOREGROUND_STAGE);
+            setLook((current + MODEL_COUNT - 1) % MODEL_COUNT);
+          }, CYCLE_MS);
+        };
+        goToRef.current = (idx) => { setLook(idx); restart(); };
+        restart();
+        return () => {
+          clearInterval(timer);
+          goToRef.current = null;
+        };
+      }
 
       // Intro animation timeline
       const tl = gsap.timeline({ delay: 0.2 });
@@ -224,6 +251,21 @@ const Hero = () => {
     }
   };
 
+  // Swipe between looks on touch screens (the stage only takes pointer
+  // events on mobile).
+  const handleTouchStart = (e) => {
+    touchStartXRef.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e) => {
+    if (touchStartXRef.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartXRef.current;
+    touchStartXRef.current = null;
+    if (Math.abs(dx) < 40) return;
+    const step = dx < 0 ? MODEL_COUNT - 1 : 1;
+    showModel((activeMainIndex + step) % MODEL_COUNT);
+  };
+
   const activeProduct = HERO_PRODUCTS[activeMainIndex];
 
   return (
@@ -253,6 +295,8 @@ const Hero = () => {
         className="hero-models-path"
         onMouseEnter={() => { isPausedRef.current = true; }}
         onMouseLeave={() => { isPausedRef.current = false; }}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
       >
         {HERO_PRODUCTS.map((item, index) => (
           <div

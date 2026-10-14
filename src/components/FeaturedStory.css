@@ -93,10 +93,34 @@
 
 @media (max-width: 768px) {
   .featured-story {
-    margin: 2rem;
-    height: 70vh;
+    margin: 1.5rem 0.75rem;
+    height: 78vh;
+    min-height: 520px;
+    max-height: 720px;
+    border-radius: 18px;
   }
   .fs-overlay {
-    padding: 3rem 2rem;
+    padding: 2rem 1.25rem;
+    background: linear-gradient(
+      to top,
+      rgba(20, 20, 20, 0.75) 0%,
+      rgba(20, 20, 20, 0.35) 45%,
+      rgba(0, 0, 0, 0) 75%
+    );
+  }
+  .fs-content {
+    gap: 1rem;
+  }
+  .fs-title {
+    font-size: clamp(2.5rem, 12vw, 3.25rem);
+  }
+  .fs-desc {
+    font-size: 1rem;
+  }
+  .fs-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-top: 0;
   }
 }
